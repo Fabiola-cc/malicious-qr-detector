@@ -1,0 +1,15 @@
+{
+  "total_samples": 200000,
+  "train_samples": 140000,
+  "val_samples": 30000,
+  "test_samples": 30000,
+  "n_classes": 2,
+  "class_distribution": {
+    "normal": 100000,
+    "malware": 100000
+  },
+  "image_sizes": {
+    "mean_width": 406.8886,
+    "mean_height": 406.8886
+  }
+}
