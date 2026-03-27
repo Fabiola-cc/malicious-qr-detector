@@ -28,11 +28,8 @@ def create_image_dataset_csv(root_dir, output_csv='qr_dataset.csv'):
     label_map = {
         'normal': 0,
         'benign': 0,
-        'legitimate': 0,
-        'phishing': 1,
-        'quishing': 1,
-        'malware': 2,
-        'malicious': 2
+        'malware': 1,
+        'malicious': 1,
     }
     
     # Recorrer primer nivel (ej: benign/, malicious/)
@@ -71,7 +68,7 @@ def create_image_dataset_csv(root_dir, output_csv='qr_dataset.csv'):
                             'filepath': img_path,
                             'filename': img_file,
                             'label': label,
-                            'label_name': ['normal', 'phishing', 'malware'][label],
+                            'label_name': ['normal', 'malware'][label],
                             'width': width,
                             'height': height,
                             'mode': mode,
@@ -110,11 +107,11 @@ def prepare_qr_dataset(data_dir='data/raw', output_dir='data/processed'):
     os.makedirs(output_dir, exist_ok=True)
     
     # 1. Crear CSV con metadata
-    print("📊 Paso 1: Creando CSV de metadata...")
+    print("Paso 1: Creando CSV de metadata...")
     df = create_image_dataset_csv(data_dir, f'{output_dir}/qr_full_dataset.csv')
     
     # 2. Análisis exploratorio básico
-    print("\n📈 Paso 2: Análisis exploratorio...")
+    print("\nPaso 2: Análisis exploratorio...")
     print(df.groupby('label_name').agg({
         'filepath': 'count',
         'width': ['mean', 'std'],
@@ -123,7 +120,7 @@ def prepare_qr_dataset(data_dir='data/raw', output_dir='data/processed'):
     }))
     
     # 3. Split del dataset
-    print("\n✂️ Paso 3: Dividiendo dataset...")
+    print("\nPaso 3: Dividiendo dataset...")
     from sklearn.model_selection import train_test_split
     
     train_df, temp_df = train_test_split(df, test_size=0.3, stratify=df['label'], random_state=42)
@@ -133,7 +130,7 @@ def prepare_qr_dataset(data_dir='data/raw', output_dir='data/processed'):
     val_df.to_csv(f'{output_dir}/val.csv', index=False)
     test_df.to_csv(f'{output_dir}/test.csv', index=False)
     
-    print(f"✅ Train: {len(train_df)} | Val: {len(val_df)} | Test: {len(test_df)}")
+    print(f"Train: {len(train_df)} | Val: {len(val_df)} | Test: {len(test_df)}")
     
     # 4. Guardar metadata
     metadata = {
@@ -153,8 +150,5 @@ def prepare_qr_dataset(data_dir='data/raw', output_dir='data/processed'):
     with open(f'{output_dir}/metadata.json', 'w') as f:
         json.dump(metadata, f, indent=2)
     
-    print(f"\n✅ Dataset preparado en: {output_dir}")
+    print(f"\nDataset preparado en: {output_dir}")
     return df
-
-if __name__ == "__main__":
-    df = prepare_qr_dataset('data/kaggle-qr-codes/QR codes', 'data_procesada')
